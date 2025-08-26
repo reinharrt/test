@@ -4,7 +4,7 @@ Panduan lengkap untuk setup workflow git dari komputer Windows 10 ke server Ubun
 
 ## Yang Akan Kamu Dapatkan
 
-1. **Development yang nyaman** - Coding di Windows 10 dengan tools favorit kamu
+1. **Development yang nyaman** - Coding di Windows 10 dengan tools favorit
 2. **Version control yang rapi** - Semua kode tersimpan aman di GitHub
 3. **Auto deployment** - Push code langsung deploy ke server Ubuntu
 4. **Workflow sederhana** - Cuma butuh 2 branch: `main` dan `production`
@@ -18,17 +18,11 @@ Panduan lengkap untuk setup workflow git dari komputer Windows 10 ke server Ubun
 
 ---
 
-## 🖥️ Setup di Windows (Komputer Development)
+## Setup di Windows (Komputer Development)
 
 ### 1. Install Git di Windows
 
-Download dan install Git dari [git-scm.com](https://git-scm.com/download/win) dengan setting default.
-
-Atau kalau pakai Chocolatey:
-```powershell
-# Buka PowerShell sebagai Administrator
-choco install git
-```
+Download file installer Git dari [git-scm.com](https://git-scm.com/download/win), pilih versi 64-bit untuk Windows. Jalankan file .exe dan ikuti wizard instalasi dengan setting default.
 
 ### 2. Konfigurasi Git
 
@@ -103,19 +97,19 @@ git checkout main
 
 ---
 
-## 🌐 Setup di Ubuntu Server
+## Setup di Ubuntu Server
 
 ### 7. Test Koneksi SSH dari Windows
 
 ```bash
 # Test koneksi SSH dari Git Bash
-ssh username@ip-server-kamu
+ssh username@192.168.1.100
 
 # Copy SSH key ke server
-ssh-copy-id -i ~/.ssh/deploy_key username@ip-server-kamu
+ssh-copy-id -i ~/.ssh/deploy_key username@192.168.1.100
 
 # Test koneksi dengan deploy key
-ssh -i ~/.ssh/deploy_key username@ip-server-kamu
+ssh -i ~/.ssh/deploy_key username@192.168.1.100
 ```
 
 ### 8. Install Git di Ubuntu Server
@@ -213,7 +207,7 @@ Di folder project kamu (Git Bash):
 
 ```bash
 # Tambahkan server sebagai remote "production"
-git remote add production username@ip-server:/var/www/test-deploy.git
+git remote add production username@192.168.1.100:/var/www/test-deploy.git
 
 # Cek remote yang tersedia
 git remote -v
@@ -223,13 +217,13 @@ Hasilnya akan seperti ini:
 ```
 origin      git@github.com:username/test-deploy.git (fetch)
 origin      git@github.com:username/test-deploy.git (push)
-production  username@ip-server:/var/www/test-deploy.git (fetch)
-production  username@ip-server:/var/www/test-deploy.git (push)
+production  username@192.168.1.100:/var/www/test-deploy.git (fetch)
+production  username@192.168.1.100:/var/www/test-deploy.git (push)
 ```
 
 ### 12. Setup SSH Config (Opsional)
 
-Buat file `C:\Users\NamaKamu\.ssh\config` untuk memudahkan koneksi:
+Buat file `C:\Users\Username\.ssh\config` untuk memudahkan koneksi:
 
 ```
 # GitHub
@@ -240,13 +234,13 @@ Host github.com
 
 # Ubuntu Server
 Host myserver
-    HostName ip-server-kamu
-    User username-server
+    HostName 192.168.1.100
+    User username
     IdentityFile ~/.ssh/deploy_key
     Port 22
 ```
 
-Sekarang kamu bisa SSH dengan perintah singkat: `ssh myserver`
+Sekarang bisa SSH dengan perintah singkat: `ssh myserver`
 
 ---
 
@@ -327,17 +321,17 @@ echo '<h1>Hello from Windows with Docker!</h1>' > src/index.html
 
 ---
 
-## 🚀 Cara Menggunakan Workflow Ini
+## Cara Menggunakan Workflow Ini
 
 ### Development Sehari-hari
 
 ```bash
-# 1. Pastikan kamu di branch main
+# 1. Pastikan di branch main
 git checkout main
 git pull origin main
 
 # 2. Edit file di folder src/
-# Gunakan code editor favorit (VS Code, Sublime, dsb)
+# Gunakan code editor (VS Code, Sublime, dsb)
 # Semua file HTML, CSS, JS taruh di folder src/
 
 # 3. Commit perubahan
@@ -370,7 +364,7 @@ Setelah perintah terakhir, file kamu akan otomatis ter-deploy ke server Ubuntu!
 
 ```bash
 # SSH ke server untuk cek hasil
-ssh username@ip-server
+ssh username@192.168.1.100
 
 # Cek container yang berjalan
 docker ps
@@ -380,7 +374,7 @@ docker-compose logs web
 
 # Test website
 curl localhost
-# atau buka browser: http://ip-server-kamu
+# atau buka browser: http://192.168.1.100
 
 # Keluar dari server
 exit
@@ -388,7 +382,7 @@ exit
 
 ---
 
-## 📝 Tips dan Trik
+## Tips dan Trik
 
 ### Rekomendasi Code Editor di Windows
 - **VS Code** - Paling populer dengan Git integration
@@ -420,7 +414,7 @@ test-deploy/
 
 ---
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### SSH Permission Denied
 ```bash
@@ -429,7 +423,7 @@ eval $(ssh-agent -s)
 ssh-add ~/.ssh/deploy_key
 
 # Test koneksi
-ssh -i ~/.ssh/deploy_key username@ip-server
+ssh -i ~/.ssh/deploy_key username@192.168.1.100
 ```
 
 ### Git Push Rejected
@@ -475,7 +469,7 @@ sudo chown -R $USER:$USER /var/www/test-deploy-live
 
 ---
 
-## 🎉 Workflow Summary
+## Workflow Summary
 
 1. **Setup Docker** - Buat docker-compose.yml, Dockerfile, dan nginx.conf
 2. **Coding** - Edit file di folder `src/` dengan nyaman di Windows
@@ -484,12 +478,12 @@ sudo chown -R $USER:$USER /var/www/test-deploy-live
 5. **Merge to production** - Gabungkan ke branch production
 6. **Deploy** - Push ke server dengan `git push production production`
 7. **Auto Build** - Docker otomatis build dan jalankan Nginx container
-8. **Live!** - Website langsung live di http://ip-server-kamu
+8. **Live!** - Website langsung live di http://192.168.1.100
 
-Dengan Docker, website kamu akan:
-- ✅ Berjalan di Nginx Alpine (ringan dan cepat)
-- ✅ Konsisten di semua environment
-- ✅ Mudah di-scale dan maintain
-- ✅ Auto restart jika ada masalah
+Dengan Docker, website akan:
+- Berjalan di Nginx Alpine (ringan dan cepat)
+- Konsisten di semua environment
+- Mudah di-scale dan maintain
+- Auto restart jika ada masalah
 
-Sekarang kamu bisa fokus coding tanpa ribet urusan server setup! 🚀🐳
+Sekarang bisa fokus coding tanpa ribet urusan server setup!
